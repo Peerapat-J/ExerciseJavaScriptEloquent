@@ -393,8 +393,8 @@ console.log(arrayValue);
         rest: {
             value: 2,
             rest: {
-            value: 3,
-            rest: null
+                value: 3,
+                rest: null
             }
         }
     };
@@ -413,25 +413,99 @@ console.log(arrayValue);
 
     Write a function arrayToList that builds up a list structure like the one shown 
     when given [1, 2, 3] as argument. 
-    
-    Also write a listToArray function that produces an array from a list. 
-    Add the helper functions prepend, which takes an element and a list and creates a new list that adds the element to the front of the input list, and nth, which takes a list and a number and returns the element at the given position in the list (with zero referring to the first element) or undefined when there is no such element.
-
 */
+
+let list = {
+    value: 1,
+    rest: {
+        value: 2,
+        rest: {
+            value: 3,
+            rest: null
+        }
+    }
+};
+
+function arrayToList(array){
+    console.log(`check arg: ${array}`)
+    let firstArray = array[0];
+    let myList = {};
+    if(array.length > 1){
+        array.shift();
+        console.log(`check arg2: ${array}`)
+        myList = {value: firstArray, rest: arrayToList(array)};
+    } else {
+        myList = {value: array[0], rest: null};
+    }
+    return myList;
+}
+let u4e3_1 = arrayToList([10, 20, 30, 40]);
+console.log(JSON.stringify(u4e3_1, null, 2));
+
+/* 
+    Also write a listToArray function that produces an array from a list.
+*/
+function listToArray(list){
+    let rsArray = [];
+    let cnt = 0;
+    while (true){
+        
+        let rs = nth(list, cnt);
+        rsArray.push(rs);
+        if (rs == undefined) break;
+        cnt++;
+    }
+    return rsArray;
+}
+console.log(`check rsArray: ${listToArray(list)}`)
+console.log(`listToArray(arrayToList([10, 20, 30])): ${console.log(listToArray(arrayToList([10, 20, 30])))}`);
+
+/* 
+    Add the helper functions prepend, which takes an element and a list and creates a new list that adds the element to the front of the input list, 
+*/
+function prepend(elm, list){
+    return {value: elm, rest: list};
+}
+console.log(`test prepend: ${JSON.stringify(prepend(11, list), null, 2)}`);
+
+
+/*  
+    and nth, which takes a list and a number and returns the element at the given position in the list (with zero referring to the first element) or undefined when there is no such element.
+ */
+function nth(list, n){    
+    if(n == 0){      
+        return list.value;
+    }
+    else if(n > 0 && list.rest!==null){
+        return nth(list.rest, n - 1);
+    } else {
+        return undefined;
+    }
+}
+//test case
+console.log(`test nth: ${nth(list, 0)}`);
+console.log(`test nth: ${nth(list, 1)}`);
+console.log(`test nth: ${nth(list, 2)}`);
+console.log(`test nth: ${nth(list, 3)}`);
+let rsArray = [];
+rsArray.push(nth(list, 0));
+rsArray.push(nth(list, 1));
+rsArray.push(nth(list, 2));
+rsArray.push(nth(list, 3));
+console.log(rsArray)
 
 /* 
    If you haven’t already, also write a recursive version of nth.
    // Your code here.
-
-    console.log(arrayToList([10, 20]));
-    // → {value: 10, rest: {value: 20, rest: null}}
-    console.log(listToArray(arrayToList([10, 20, 30])));
-    // → [10, 20, 30]
-    console.log(prepend(10, prepend(20, null)));
-    // → {value: 10, rest: {value: 20, rest: null}}
-    console.log(nth(arrayToList([10, 20, 30]), 1));
-    // → 20
 */
+console.log("1 ->" + arrayToList([10, 20]));
+// → {value: 10, rest: {value: 20, rest: null}}
+console.log("2 ->" + listToArray(arrayToList([10, 20, 30])));
+// → [10, 20, 30]
+console.log("3 ->" + prepend(10, prepend(20, null)));
+// → {value: 10, rest: {value: 20, rest: null}}
+console.log("4 ->" + nth(arrayToList([10, 20, 30]), 1));
+// → 20
 
 
 /* 
@@ -448,13 +522,48 @@ console.log(arrayValue);
     The Object.keys function will be useful when you need to go over the properties of objects to compare them.
 */
 
-/* 
-    // Your code here.
-    let obj = {here: {is: "an"}, object: 2};
-    console.log(deepEqual(obj, obj));
-    // → true
-    console.log(deepEqual(obj, {here: 1, object: 2}));
-    // → false
-    console.log(deepEqual(obj, {here: {is: "an"}, object: 2}));
-    // → true
-*/
+let obj1 = {
+  name: "Peerapat",
+  info: {
+    age: 30,
+    skills: ["JS", "C++"]
+  }
+};
+
+let obj2 = {
+  name: "Peerapat",
+  info: {
+    age: 30,
+    skills: ["JS", "C++"]
+  }
+};
+
+console.log(deepEqual(obj1, obj2)); // → true
+
+function deepEqual(a, b) {
+
+  if (a === b) return true;
+  if (a === null || b === null) return false;
+  if (typeof a !== "object" || typeof b !== "object") return false;
+
+  let keysA = Object.keys(a);
+  let keysB = Object.keys(b);
+
+  if (keysA.length !== keysB.length) return false;
+
+  for (let key of keysA) {
+    if (!keysB.includes(key) || !deepEqual(a[key], b[key])) {
+      return false;
+    }
+  }
+  return true;
+}
+console.log("5555555555"+deepEqual(obj1, obj2));
+// Your code here.
+let obj = {here: {is: "an"}, object: 2};
+console.log(deepEqual(obj, obj));
+// → true
+console.log(deepEqual(obj, {here: 1, object: 2}));
+// → false
+console.log(deepEqual(obj, {here: {is: "an"}, object: 2}));
+// → true
